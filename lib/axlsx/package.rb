@@ -70,7 +70,7 @@ module Axlsx
 
     #def self.parse(input, confirm_valid = false)
     #  p = Package.new
-    #  z = Zip::ZipFile.open(input)
+    #  z = Zip::File.open(input)
     #  p.workbook = Workbook.parse z.get_entry(WORKBOOK_PN)
     #  p
     #end
@@ -101,7 +101,7 @@ module Axlsx
     def serialize(output, confirm_valid=false)
       return false unless !confirm_valid || self.validate.empty?
       Relationship.clear_cached_instances
-      Zip::ZipOutputStream.open(output) do |zip|
+      Zip::OutputStream.open(output) do |zip|
         write_parts(zip)
       end
       true
@@ -114,7 +114,7 @@ module Axlsx
     def to_stream(confirm_valid=false)
       return false unless !confirm_valid || self.validate.empty?
       Relationship.clear_cached_instances
-      zip = write_parts(Zip::ZipOutputStream.new("streamed", true))
+      zip = write_parts(Zip::OutputStream.new("streamed", true))
       stream = zip.close_buffer
       stream.rewind
       stream
@@ -154,8 +154,8 @@ module Axlsx
     private
 
     # Writes the package parts to a zip archive.
-    # @param [Zip::ZipOutputStream] zip
-    # @return [Zip::ZipOutputStream]
+    # @param [Zip::OutputStream] zip
+    # @return [Zip::OutputStream]
     def write_parts(zip)
       p = parts
       p.each do |part|
@@ -183,10 +183,10 @@ module Axlsx
     # to set this explicitly, too (eg. with `Package.new(created_at: Time.local(2013, 1, 1))`).
     #
     # @param part A hash describing a part of this pacakge (see {#parts})
-    # @return [Zip::ZipEntry]
+    # @return [Zip::Entry]
     def zip_entry_for_part(part)
       timestamp = Zip::DOSTime.at(@core.created.to_i)
-      Zip::ZipEntry.new("", part[:entry], "", "", 0, 0, Zip::ZipEntry::DEFLATED, 0, timestamp)
+      Zip::Entry.new("", part[:entry], "", "", 0, 0, Zip::Entry::DEFLATED, 0, timestamp)
     end
     
     # The parts of a package
