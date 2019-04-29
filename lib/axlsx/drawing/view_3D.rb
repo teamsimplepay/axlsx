@@ -91,7 +91,7 @@ module Axlsx
         @perspective = v
       end
 
-    # DataTypeValidator.validate "#{self.class}.perspective", [Integer, Fixnum], v, lambda {|arg| arg >= 0 && arg <= 240 }; @perspective = v; end
+    # DataTypeValidator.validate "#{self.class}.perspective", [Integer], v, lambda {|arg| arg >= 0 && arg <= 240 }; @perspective = v; end
 
     # Serializes the object
     # @param [String] str
