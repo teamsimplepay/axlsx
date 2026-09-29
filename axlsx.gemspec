@@ -16,12 +16,12 @@ Gem::Specification.new do |s|
   s.test_files  = Dir.glob("{test/**/*}")
 
   s.add_runtime_dependency 'nokogiri', '>= 1.4.1'
-  s.add_runtime_dependency 'rubyzip', '~> 1.3.0'
+  s.add_runtime_dependency 'rubyzip', '~> 3.4'
   s.add_runtime_dependency "htmlentities", "~> 4.3.1"
 
   s.add_development_dependency 'yard'
   s.add_development_dependency 'kramdown'
   s.add_development_dependency 'timecop', "~> 0.6.1"
-  s.required_ruby_version = '>= 1.9.2'
+  s.required_ruby_version = '>= 3.0'
   s.require_path = 'lib'
 end

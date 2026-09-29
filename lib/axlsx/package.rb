@@ -114,7 +114,7 @@ module Axlsx
     def to_stream(confirm_valid=false)
       return false unless !confirm_valid || self.validate.empty?
       Relationship.clear_cached_instances
-      zip = write_parts(Zip::OutputStream.new(StringIO.new, true))
+      zip = write_parts(Zip::OutputStream.new(StringIO.new, stream: true))
       stream = zip.close_buffer
       stream.rewind
       stream
@@ -186,7 +186,7 @@ module Axlsx
     # @return [Zip::Entry]
     def zip_entry_for_part(part)
       timestamp = Zip::DOSTime.at(@core.created.to_i)
-      Zip::Entry.new("", part[:entry], "", "", 0, 0, Zip::Entry::DEFLATED, 0, timestamp)
+      Zip::Entry.new("", part[:entry], compression_method: Zip::Entry::DEFLATED, time: timestamp)
     end
     
     # The parts of a package
