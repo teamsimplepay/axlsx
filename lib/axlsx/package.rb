@@ -182,11 +182,17 @@ module Axlsx
     # Note: {Core#created} also defaults to the current time – so to generate identical axlsx packages you have
     # to set this explicitly, too (eg. with `Package.new(created_at: Time.local(2013, 1, 1))`).
     #
+    # `size` must be set. rubyzip 3 turns on ZIP64 support by default, and it adds a
+    # ZIP64 extra field to every entry whose size it does not already know. That raises the
+    # "version needed to extract" from 2.0 to 4.5, and Google Sheets then refuses the file.
+    # Passing 0 here is what the pre-rubyzip-3 call did, and every package part is far
+    # below the 4GB point where ZIP64 is actually needed.
+    #
     # @param part A hash describing a part of this pacakge (see {#parts})
     # @return [Zip::Entry]
     def zip_entry_for_part(part)
       timestamp = Zip::DOSTime.at(@core.created.to_i)
-      Zip::Entry.new("", part[:entry], compression_method: Zip::Entry::DEFLATED, time: timestamp)
+      Zip::Entry.new("", part[:entry], compression_method: Zip::Entry::DEFLATED, time: timestamp, size: 0)
     end
     
     # The parts of a package

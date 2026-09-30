@@ -148,6 +148,17 @@ class TestPackage < Test::Unit::TestCase
     assert package_1.to_stream.string == package_2.to_stream.string, "zip files are not identical"
   end
 
+  # See comment for Package#zip_entry_for_part. A ZIP64 extra field raises the
+  # "version needed to extract" from 2.0 to 4.5, and Google Sheets rejects such a file.
+  def test_serialization_does_not_use_zip64
+    Zip::File.open_buffer(StringIO.new(@package.to_stream.string)) do |zf|
+      assert zf.entries.any?, "expected the package to have entries"
+      zf.entries.each do |entry|
+        assert !entry.zip64?, "#{entry.name} has a ZIP64 extra field"
+      end
+    end
+  end
+
   def test_validation
     assert_equal(@package.validate.size, 0, @package.validate)
     Axlsx::Workbook.send(:class_variable_set, :@@date1904, 9900)
